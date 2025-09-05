@@ -1,3 +1,18 @@
+function pronounceWord(word) {
+  // 1. নতুন একটি SpeechSynthesisUtterance অবজেক্ট বানানো হলো।
+  const utterance = new SpeechSynthesisUtterance(word);
+
+  // 2. কোন ভাষায় পড়বে সেটা ঠিক করা হলো।
+  utterance.lang = "en-EN"; // English
+
+  // 3. ব্রাউজারের speech engine দিয়ে শব্দটি বলা হলো।
+  window.speechSynthesis.speak(utterance);
+}
+
+
+
+
+
 const createElements = (arr) => {
   const htmlElements = arr.map((el) => `<span class="btn">${el}</span>`);
   return htmlElements.join(" ");
@@ -113,7 +128,7 @@ const displayLevelWord = (words) => {
                     })" class="btn bg-[#1A91FF20] border-none hover:bg-[#1A91FF90]">
                         <i class="fa-solid fa-circle-info"></i>
                     </button>
-                    <button class="btn bg-[#1A91FF20] border-none hover:bg-[#1A91FF90]">
+                    <button onclick="pronounceWord('${word.word}')" class="btn bg-[#1A91FF20] border-none hover:bg-[#1A91FF90]">
                         <i class="fa-solid fa-volume-high"></i>
                     </button>
 
@@ -142,3 +157,21 @@ const displayLessons = (lessons) => {
 };
 
 loadLessons();
+
+document.getElementById("btn-search").addEventListener("click", () => {
+  const input = document.getElementById("input-search");
+  const searchValue = input.value.trim().toLowerCase();
+  console.log(searchValue);
+
+  fetch("https://openapi.programming-hero.com/api/words/all")
+  .then(res => res.json())
+  .then(data => {
+    const allWords = data.data;
+    // console.log(allWords);
+
+    const filterWords = allWords.filter((word) => word.word.toLowerCase().includes(searchValue));
+    console.log(filterWords);
+    displayLevelWord(filterWords);
+});
+
+});
